@@ -1,53 +1,56 @@
-const express = require('express')
-const app = express()
-const moment = require('moment')
-const port = 5000
+var app = require("express")();
+const express = require("express");
+var http = require("http").Server(app);
+var io = require("socket.io")(http);
+var port = process.env.PORT || 3001;
+app.use("/static", express.static("./static/"));
+let broadcasterVideo;
+let broadcasterAudio;
 
-const route_api = require('./api')
+io.sockets.on("error", (e) => console.log(e));
+io.sockets.on("connection", (socket) => {
+  socket.on("broadcasterVideo", () => {
+    broadcasterVideo = socket.id;
+    socket.broadcast.emit("broadcasterVideo");
+  });
+  socket.on("broadcasterAudio", () => {
+    broadcasterAudio = socket.id;
+    socket.broadcast.emit("broadcasterAudio");
+  });
+  socket.on("watcherVideo", () => {
+    socket.to(broadcasterVideo).emit("watcherVideo", socket.id);
+  });
+  socket.on("watcherAudio", () => {
+    socket.to(broadcasterAudio).emit("watcherAudio", socket.id);
+  });
+  socket.on("offerVideo", (id, message) => {
+    socket.to(id).emit("offerVideo", socket.id, message);
+  });
+  socket.on("offerAudio", (id, message) => {
+    socket.to(id).emit("offerAudio", socket.id, message);
+  });
+  socket.on("answerVideo", (id, message) => {
+    socket.to(id).emit("answerVideo", socket.id, message);
+  });
+  socket.on("answerAudio", (id, message) => {
+    socket.to(id).emit("answerAudio", socket.id, message);
+  });
+  socket.on("candidateVideo", (id, message) => {
+    socket.to(id).emit("candidateVideo", socket.id, message);
+  });
+  socket.on("candidateAudio", (id, message) => {
+    socket.to(id).emit("candidateAudio", socket.id, message);
+  });
+  socket.on("disconnect", () => {
+    socket.to(broadcasterVideo).emit("disconnectPeer", socket.id);
+    socket.to(broadcasterAudio).emit("disconnectPeer", socket.id);
+  });
+  socket.on("sendMessage", (msg) => {
+    console.log(msg);
+    io.emit("sendMessage", msg);
+  });
+});
 
-
-app.use((req, res, next) => {
-    console.log(`LOGGED:${moment().format('MMMM Do YYYY,h:mm:ss a')}`)
-    next()
-  })
-  app.use('/api', route_api)
-  app.get('/', (req, res) => {
-    res.send("Home")
-  })
-  app.get('/about', (req, res) => {
-    res.send("<h1>เจ้าต้าวอ้วงงงง</h1>")
-  })
-
-  
-  app.post('/', function (req, res) {
-    res.send('Got a POST request')
-  })
-  app.put('/user', function (req, res) {
-    res.send('Got a PUT request at /user')
-  })
-  app.delete('/user', function (req, res) {
-    res.send('Got a DELETE request at /user')
-  })
-// app.get('/', (req, res) => 
-// res.send('res นี่คือการส่งกลับไปยัง Browser')
-
-// )
-
-
-//รับ parameter แบบ Query string
-// GET
-// localhost:5000/student?code=1234&x=5&y=8
-app.get('/student', (req, res) => {
-  console.log(req.query);
-  res.send("<h1>Student Query string</h1> " + req.query.code )
-})
-
-// รับ parameter แบบ Url Params
- app.get('/student/:code', (req, res) => {
-  console.log(req.query);
-  console.log(req.params);
-  res.send("<h1>Student url parem</h1> " + req.params.code )
-})
-
-
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+http.listen(port, function () {
+  console.log("listening on:" + port);
+});
