@@ -51,6 +51,10 @@ io.sockets.on("connection", (socket) => {
   });
 });
 
+app.get("/health-check", (req, res) => {
+  res.send("ok");
+});
+
 http.listen(port, function () {
   console.log("listening on:" + port);
 });
