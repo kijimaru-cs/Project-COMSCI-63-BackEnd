@@ -17,33 +17,55 @@ io.sockets.on("connection", (socket) => {
       broadcasterVideo = socket.id;
       socket.broadcast.in(room).emit("broadcasterVideo");
     });
-    socket.on("broadcasterAudio", () => {
+    socket.on("broadcasterAudioSend", () => {
       broadcasterAudio = socket.id;
-      socket.broadcast.in(room).emit("broadcasterAudio");
+      socket.broadcast.in(room).emit("broadcasterAudioReceive");
+    });
+    socket.on("broadcasterAudioSend2", () => {
+      broadcasterAudio = socket.id;
+      socket.broadcast.in(room).emit("broadcasterAudioReceive2");
     });
     socket.on("watcherVideo", () => {
       socket.to(broadcasterVideo).in(room).emit("watcherVideo", socket.id);
     });
-    socket.on("watcherAudio", () => {
-      socket.to(broadcasterAudio).in(room).emit("watcherAudio", socket.id);
+    socket.on("watcherAudioReceive", () => {
+      socket.to(broadcasterAudio).in(room).emit("watcherAudioSend", socket.id);
+    });
+    socket.on("watcherAudioReceive2", () => {
+      socket.to(broadcasterAudio).in(room).emit("watcherAudioSend2", socket.id);
     });
     socket.on("offerVideo", (id, message) => {
       socket.to(id).in(room).emit("offerVideo", socket.id, message);
     });
-    socket.on("offerAudio", (id, message) => {
-      socket.to(id).in(room).emit("offerAudio", socket.id, message);
+    socket.on("offerAudioSend", (id, message) => {
+      socket.to(id).in(room).emit("offerAudioReceive", socket.id, message);
+    });
+    socket.on("offerAudioSend2", (id, message) => {
+      socket.to(id).in(room).emit("offerAudioReceive2", socket.id, message);
     });
     socket.on("answerVideo", (id, message) => {
       socket.to(id).in(room).emit("answerVideo", socket.id, message);
     });
-    socket.on("answerAudio", (id, message) => {
-      socket.to(id).in(room).emit("answerAudio", socket.id, message);
+    socket.on("answerAudioReceive", (id, message) => {
+      socket.to(id).in(room).emit("answerAudioSend", socket.id, message);
+    });
+    socket.on("answerAudioReceive2", (id, message) => {
+      socket.to(id).in(room).emit("answerAudioSend2", socket.id, message);
     });
     socket.on("candidateVideo", (id, message) => {
       socket.to(id).in(room).emit("candidateVideo", socket.id, message);
     });
-    socket.on("candidateAudio", (id, message) => {
-      socket.to(id).in(room).emit("candidateAudio", socket.id, message);
+    socket.on("candidateAudioSend", (id, message) => {
+      socket.to(id).in(room).emit("candidateAudioReceive", socket.id, message);
+    });
+    socket.on("candidateAudioSend2", (id, message) => {
+      socket.to(id).in(room).emit("candidateAudioReceive2", socket.id, message);
+    });
+    socket.on("candidateAudioReceive", (id, message) => {
+      socket.to(id).in(room).emit("candidateAudioSend", socket.id, message);
+    });
+    socket.on("candidateAudioReceive2", (id, message) => {
+      socket.to(id).in(room).emit("candidateAudioSend2", socket.id, message);
     });
     socket.on("disconnect", () => {
       console.log(socket.id, "=>", "disconnected");
@@ -57,7 +79,15 @@ io.sockets.on("connection", (socket) => {
           1
         );
       }
-      io.in(room).emit("sendUsername", user);
+      let sendUser = []
+      io.of('/').in(room).clients((error, clients) => {
+        if (error) throw error;
+        clients.forEach(element => {
+          sendUser.push(userAll.find((item) => item.ID === element).USERNAME)
+          sendUser = [...new Set(sendUser)];
+        });
+        io.in(room).emit("sendUsername", sendUser);
+      });
       socket.to(broadcasterVideo).in(room).emit("disconnectPeer", socket.id);
       socket.to(broadcasterAudio).in(room).emit("disconnectPeer", socket.id);
     });
@@ -66,10 +96,18 @@ io.sockets.on("connection", (socket) => {
       io.in(room).emit("sendMessage", msg);
     });
     socket.on("sendUsername", (dataUser) => {
+      let sendUser = []
       user.push(dataUser);
       userAll.push({ ID: socket.id, USERNAME: dataUser });
       user = [...new Set(user)];
-      io.in(room).emit("sendUsername", user);
+      io.of('/').in(room).clients((error, clients) => {
+        if (error) throw error;
+        clients.forEach(element => {
+          sendUser.push(userAll.find((item) => item.ID === element).USERNAME)
+          sendUser = [...new Set(sendUser)];
+        });
+        io.in(room).emit("sendUsername", sendUser);
+      });
     });
   });
 });
