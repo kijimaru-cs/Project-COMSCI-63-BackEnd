@@ -35,13 +35,13 @@ io.sockets.on("connection", (socket) => {
       socket.to(broadcasterAudio).in(room).emit("watcherAudioSend2", socket.id);
     });
     socket.on("offerVideo", (id, message) => {
-      socket.to(id).in(room).emit("offerVideo", socket.id, message);
+      socket.to(id).emit("offerVideo", socket.id, message);
     });
     socket.on("offerAudioSend", (id, message) => {
-      socket.to(id).in(room).emit("offerAudioReceive", socket.id, message);
+      socket.to(id).emit("offerAudioReceive", socket.id, message);
     });
     socket.on("offerAudioSend2", (id, message) => {
-      socket.to(id).in(room).emit("offerAudioReceive2", socket.id, message);
+      socket.to(id).emit("offerAudioReceive2", socket.id, message);
     });
     socket.on("answerVideo", (id, message) => {
       socket.to(id).in(room).emit("answerVideo", socket.id, message);
@@ -82,11 +82,15 @@ io.sockets.on("connection", (socket) => {
       let sendUser = []
       io.of('/').in(room).clients((error, clients) => {
         if (error) throw error;
-        clients.forEach(element => {
+        try {
+          clients.forEach(element => {
           sendUser.push(userAll.find((item) => item.ID === element).USERNAME)
           sendUser = [...new Set(sendUser)];
-        });
-        io.in(room).emit("sendUsername", sendUser);
+           });
+            io.in(room).emit("sendUsername", sendUser);
+        } catch (error) {
+          console.log(error)
+        }
       });
       socket.to(broadcasterVideo).in(room).emit("disconnectPeer", socket.id);
       socket.to(broadcasterAudio).in(room).emit("disconnectPeer", socket.id);
@@ -102,11 +106,16 @@ io.sockets.on("connection", (socket) => {
       user = [...new Set(user)];
       io.of('/').in(room).clients((error, clients) => {
         if (error) throw error;
-        clients.forEach(element => {
+        try {
+          clients.forEach(element => {
           sendUser.push(userAll.find((item) => item.ID === element).USERNAME)
           sendUser = [...new Set(sendUser)];
-        });
-        io.in(room).emit("sendUsername", sendUser);
+           });
+            io.in(room).emit("sendUsername", sendUser);
+        } catch (error) {
+          console.log(error)
+        }
+        
       });
     });
   });
