@@ -44,28 +44,28 @@ io.sockets.on("connection", (socket) => {
       socket.to(id).emit("offerAudioReceive2", socket.id, message);
     });
     socket.on("answerVideo", (id, message) => {
-      socket.to(id).in(room).emit("answerVideo", socket.id, message);
+      socket.to(id).emit("answerVideo", socket.id, message);
     });
     socket.on("answerAudioReceive", (id, message) => {
-      socket.to(id).in(room).emit("answerAudioSend", socket.id, message);
+      socket.to(id).emit("answerAudioSend", socket.id, message);
     });
     socket.on("answerAudioReceive2", (id, message) => {
-      socket.to(id).in(room).emit("answerAudioSend2", socket.id, message);
+      socket.to(id).emit("answerAudioSend2", socket.id, message);
     });
     socket.on("candidateVideo", (id, message) => {
-      socket.to(id).in(room).emit("candidateVideo", socket.id, message);
+      socket.to(id).emit("candidateVideo", socket.id, message);
     });
     socket.on("candidateAudioSend", (id, message) => {
-      socket.to(id).in(room).emit("candidateAudioReceive", socket.id, message);
+      socket.to(id).emit("candidateAudioReceive", socket.id, message);
     });
     socket.on("candidateAudioSend2", (id, message) => {
-      socket.to(id).in(room).emit("candidateAudioReceive2", socket.id, message);
+      socket.to(id).emit("candidateAudioReceive2", socket.id, message);
     });
     socket.on("candidateAudioReceive", (id, message) => {
-      socket.to(id).in(room).emit("candidateAudioSend", socket.id, message);
+      socket.to(id).emit("candidateAudioSend", socket.id, message);
     });
     socket.on("candidateAudioReceive2", (id, message) => {
-      socket.to(id).in(room).emit("candidateAudioSend2", socket.id, message);
+      socket.to(id).emit("candidateAudioSend2", socket.id, message);
     });
     socket.on("disconnect", () => {
       console.log(socket.id, "=>", "disconnected");
