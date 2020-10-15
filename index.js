@@ -3,11 +3,15 @@ const express = require("express");
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 var port = process.env.PORT || 3001;
+const cors = require("cors")
 app.use("/static", express.static("./static/"));
 let broadcasterVideo;
 let broadcasterAudio;
 user = [];
 userAll = [];
+
+app.use(cors());
+
 io.sockets.on("error", (e) => console.log(e));
 io.sockets.on("connection", (socket) => {
   socket.on("create", (room) => {
