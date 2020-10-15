@@ -1,7 +1,7 @@
 var app = require("express")();
 const express = require("express");
-var http = require("http").Server(app);
-var io = require("socket.io")(http);
+var https = require("https").Server(app);
+var io = require("socket.io")(https);
 var port = process.env.PORT || 3001;
 app.use("/static", express.static("./static/"));
 let broadcasterVideo;
@@ -125,6 +125,6 @@ app.get("/health-check", (req, res) => {
   res.send("ok");
 });
 
-http.listen(port, function () {
+https.listen(port, function () {
   console.log("listening on:" + port);
 });
