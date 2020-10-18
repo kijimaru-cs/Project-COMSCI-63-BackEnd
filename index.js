@@ -1,16 +1,15 @@
 var app = require("express")();
 const express = require("express");
+var fs = require('fs')
+var https = require('https')
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 var port = process.env.PORT || 3001;
-const cors = require("cors")
 app.use("/static", express.static("./static/"));
 let broadcasterVideo;
 let broadcasterAudio;
 user = [];
 userAll = [];
-
-app.use(cors());
 
 io.sockets.on("error", (e) => console.log(e));
 io.sockets.on("connection", (socket) => {
@@ -132,3 +131,11 @@ app.get("/health-check", (req, res) => {
 http.listen(port, function () {
   console.log("listening on:" + port);
 });
+
+https.createServer({
+  key: fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.cert')
+}, app)
+.listen(3002, function () {
+  console.log('Example app listening on port 3002! Go to https://localhost:3002/')
+})
