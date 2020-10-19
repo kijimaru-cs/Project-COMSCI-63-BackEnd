@@ -11,12 +11,8 @@ let broadcasterVideo;
 let broadcasterAudio;
 user = [];
 userAll = [];
-// app.use(cors())
-app.use((req, res, next) => {
-  req.header('Access-Control-Allow-Origin', '*')
-  req.header('Access-Control-Allow-Credentials', 'true')
-  next();
-})
+app.use(cors())
+
 
 
 io.sockets.on("error", (e) => console.log(e));
