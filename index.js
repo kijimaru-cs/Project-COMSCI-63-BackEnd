@@ -1,7 +1,7 @@
 var app = require("express")();
 const express = require("express");
 var fs = require('fs')
-var https = require('https')
+// var https = require('https')
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 var port = process.env.PORT || 3001;
@@ -136,10 +136,10 @@ http.listen(port, function () {
   console.log("listening on:" + port);
 });
 
-https.createServer({
-  key: fs.readFileSync('server.key'),
-  cert: fs.readFileSync('server.cert')
-}, app)
-.listen(3002, function () {
-  console.log('Example app listening on port 3002! Go to https://localhost:3002/')
-})
+// https.createServer({
+//   key: fs.readFileSync('server.key'),
+//   cert: fs.readFileSync('server.cert')
+// }, app)
+// .listen(3002, function () {
+//   console.log('Example app listening on port 3002! Go to https://localhost:3002/')
+// })
