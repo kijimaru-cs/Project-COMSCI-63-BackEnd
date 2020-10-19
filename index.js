@@ -14,6 +14,7 @@ userAll = [];
 app.use(cors())
 app.get('/', (req, res)=> {
   res.set('Access-Control-Allow-Origin', '*')
+  res.set('Access-Control-Allow-Credentials', 'true')
 })
 
 
