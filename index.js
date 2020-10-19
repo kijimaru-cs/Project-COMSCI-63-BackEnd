@@ -6,10 +6,12 @@ var http = require("http").Server(app);
 var io = require("socket.io")(http);
 var port = process.env.PORT || 3001;
 app.use("/static", express.static("./static/"));
+const cors = require("cors")
 let broadcasterVideo;
 let broadcasterAudio;
 user = [];
 userAll = [];
+app.use(cors())
 
 io.sockets.on("error", (e) => console.log(e));
 io.sockets.on("connection", (socket) => {
